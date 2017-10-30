@@ -1,0 +1,79 @@
+    /* Extra Small Devices, Phones */
+    
+    @media only screen and (min-width: 310px) {
+        .projectSubmissionForm {
+            font-family: serif;
+            text-align: center;
+            .title {
+                margin: auto;
+                font-weight: bold;
+                font-size: 40px;
+                margin-bottom: 20px;
+            }
+            .inputContainer {
+                padding: 10px 0px;
+                .inputLabel {
+                    font-size: 30px;
+                    margin-bottom: 10px;
+                }
+                .inputBox {
+                    font-size: 25px;
+                    width: 100%;
+                    height: 26px;
+                    margin: auto;
+                }
+                .textareaBox {
+                    resize: none;
+                    font-size: 25px;
+                    width: 100%;
+                    height: 100px;
+                }
+                .inputfile {
+                    width: 0.1px;
+                    height: 0.1px;
+                    opacity: 0;
+                    overflow: hidden;
+                    position: absolute;
+                    z-index: -1;
+                }
+                .inputfile+label {
+                    padding: 10px;
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    color: white;
+                    background-color: black;
+                    display: inline-block;
+                    cursor: pointer;
+                }
+                .inputfile:focus+label,
+                .inputfile+label:hover {
+                    background-color: red;
+                }
+            }
+        }
+    }
+    /* Small Devices, Tablets */
+    
+    @media only screen and (min-width: 768px) {
+        .projectSubmissionForm {
+            .title {
+                font-size: 60px;
+            }
+            .inputContainer {
+                padding: 10px 0px;
+                .inputLabel {
+                    font-size: 40px;
+                    margin-bottom: 10px;
+                }
+                .inputBox {
+                    width: 50%;
+                }
+                .textareaBox {
+                    width: 50%;
+                }
+            }
+        }
+    }
+    /* Medium Devices, Desktops */
+    
+    @media only screen and (min-width: 1024px) {}

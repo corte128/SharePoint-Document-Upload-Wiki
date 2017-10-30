@@ -1,0 +1,43 @@
+{
+    "$schema": "https://dev.office.com/json-schemas/spfx-build/config.2.0.schema.json",
+    "version": "2.0",
+    "bundles": {
+        "project-submission-form-web-part": {
+            "components": [{
+                "entrypoint": "./lib/webparts/projectSubmissionForm/ProjectSubmissionFormWebPart.js",
+                "manifest": "./src/webparts/projectSubmissionForm/ProjectSubmissionFormWebPart.manifest.json"
+            }]
+        }
+    },
+    "externals": {
+        "sp-init": {
+        "path": "https://contoso.sharepoint.com/_layouts/15/init.js",
+        "globalName": "$_global_init"
+        },
+        "microsoft-ajax": {
+        "path": "https://contoso.sharepoint.com/_layouts/15/MicrosoftAjax.js",
+        "globalName": "Sys",
+        "globalDependencies": [
+            "sp-init"
+        ]
+        },
+        "sp-runtime": {
+        "path": "https://contoso.sharepoint.com/_layouts/15/SP.Runtime.js",
+        "globalName": "SP",
+        "globalDependencies": [
+            "microsoft-ajax"
+        ]
+        },
+        "sharepoint": {
+        "path": "https://contoso.sharepoint.com/_layouts/15/SP.js",
+        "globalName": "SP",
+        "globalDependencies": [
+            "sp-runtime"
+        ]
+    }
+    },
+    "localizedResources": {
+        "ProjectSubmissionFormWebPartStrings": "lib/webparts/projectSubmissionForm/loc/{locale}.js"
+    }
+
+}

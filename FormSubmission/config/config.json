@@ -1,0 +1,42 @@
+{
+    "$schema": "https://dev.office.com/json-schemas/spfx-build/config.2.0.schema.json",
+    "version": "2.0",
+    "bundles": {
+        "form-submission-web-part": {
+            "components": [{
+                "entrypoint": "./lib/webparts/formSubmission/FormSubmissionWebPart.js",
+                "manifest": "./src/webparts/formSubmission/FormSubmissionWebPart.manifest.json"
+            }]
+        }
+    },
+    "externals": {
+        "sp-init": {
+            "path": "https://siriustutorial.sharepoint.com/_layouts/15/init.js",
+            "globalName": "$_global_init"
+        },
+        "microsoft-ajax": {
+            "path": "https://siriustutorial.sharepoint.com/_layouts/15/MicrosoftAjax.js",
+            "globalName": "Sys",
+            "globalDependencies": [
+                "sp-init"
+            ]
+        },
+        "sp-runtime": {
+            "path": "https://siriustutorial.sharepoint.com/_layouts/15/SP.Runtime.js",
+            "globalName": "SP",
+            "globalDependencies": [
+                "microsoft-ajax"
+            ]
+        },
+        "sharepoint": {
+            "path": "https://siriustutorial.sharepoint.com/_layouts/15/SP.js",
+            "globalName": "SP",
+            "globalDependencies": [
+                "sp-runtime"
+            ]
+        }
+    },
+    "localizedResources": {
+        "FormSubmissionWebPartStrings": "lib/webparts/formSubmission/loc/{locale}.js"
+    }
+}

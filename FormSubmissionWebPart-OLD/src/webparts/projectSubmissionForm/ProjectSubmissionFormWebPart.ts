@@ -1,3 +1,4 @@
+// tslint:disable:quotemark
 import { Version } from '@microsoft/sp-core-library';
 import {
   BaseClientSideWebPart,
@@ -18,7 +19,37 @@ export default class ProjectSubmissionFormWebPartWebPart extends BaseClientSideW
   public render(): void {
     this.domElement.innerHTML = `
       <div class="${styles.projectSubmissionForm}">
-      
+        <form runat="server">
+          <!-- Title -->
+          <div class="${styles.title}">
+            Submission Form
+          </div>
+
+          <!-- Project title -->
+          <div class="${styles.inputContainer}">
+            <div class="${styles.inputLabel}">
+              Title
+            </div>
+            <input type="text" class="${styles.inputBox}"/>
+          </div>
+
+          <!-- Description -->
+          <div class="${styles.inputContainer}">
+            <div class="${styles.inputLabel}">
+              Description
+            </div>
+            <textarea class="${styles.textareaBox}"></textarea>
+          </div>
+
+          <!-- Upload -->
+          <div class="${styles.inputContainer}">
+            <div class="${styles.inputLabel}">
+              Upload File
+            </div>
+            <input type="file" name="file" id="file" class="${styles.inputfile}" />
+            <label for="file">Choose a file</label>
+          </div>
+        </form>
       </div>
     `;
   }
@@ -48,4 +79,9 @@ export default class ProjectSubmissionFormWebPartWebPart extends BaseClientSideW
       ]
     };
   }
+
+  // protected addToDocumentList(){
+  //   var ctx = new SP.
+
+  // }
 }

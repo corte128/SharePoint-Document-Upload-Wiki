@@ -1,0 +1,12 @@
+{
+  "$schema": "https://dev.office.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "form-submission-client-side-solution",
+    "id": "19d8c20a-d8d2-4b2a-815c-0bf9c63e68c1",
+    "version": "1.0.0.0",
+    "skipFeatureDeployment": true
+  },
+  "paths": {
+    "zippedPackage": "solution/form-submission.sppkg"
+  }
+}
