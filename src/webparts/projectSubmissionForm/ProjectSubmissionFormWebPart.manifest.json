@@ -1,0 +1,26 @@
+{
+  "$schema": "https://dev.office.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+  "id": "7bce676f-975f-42ef-a0b2-f524e8c473f3",
+  "alias": "ProjectSubmissionFormWebPart",
+  "componentType": "WebPart",
+
+  // The "*" signifies that the version should be taken from the package.json
+  "version": "*",
+  "manifestVersion": 2,
+
+  // If true, the component can only be installed on sites where Custom Script is allowed.
+  // Components that allow authors to embed arbitrary script code should set this to true.
+  // https://support.office.com/en-us/article/Turn-scripting-capabilities-on-or-off-1f2c515f-5d7e-448a-9fd7-835da935584f
+  "requiresCustomScript": false,
+
+  "preconfiguredEntries": [{
+    "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Other
+    "group": { "default": "Other" },
+    "title": { "default": "ProjectSubmissionForm" },
+    "description": { "default": "Takes in a document of type microssoft word and submits it to the server" },
+    "officeFabricIconFontName": "Page",
+    "properties": {
+      "description": "ProjectSubmissionForm"
+    }
+  }]
+}
