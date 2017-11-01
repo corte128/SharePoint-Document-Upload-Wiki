@@ -15,118 +15,160 @@ export default class FormSubmission extends React.Component<IFormSubmissionProps
       listTitle: "",
       listDescription: "",
       fileData: "",
+      fileName: "",
       loadingLists: false,
       error: null
     };
 
     this.addToDocumentList = this.addToDocumentList.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.uploadFile = this.uploadFile.bind(this);
+    // this.uploadFileToDocumentLibrary = this.uploadFileToDocumentLibrary.bind(this);
   }
 
-  // private getListsTitles(): void {
-  //   this.setState({
-  //     loadingLists: true,
-  //     listTitles: [],
-  //     error: null
-  //   });
-
-  //   const context: SP.ClientContext = new SP.ClientContext(this.props.siteUrl);
-  //   const lists: SP.ListCollection = context.get_web().get_lists();
-  //   context.load(lists, 'Include(Title)');
-  //   context.executeQueryAsync((sender: any, args: SP.ClientRequestSucceededEventArgs): void => {
-  //     const listEnumerator: IEnumerator<SP.List> = lists.getEnumerator();
-
-  //     const titles: string[] = [];
-  //     while (listEnumerator.moveNext()) {
-  //       const list: SP.List = listEnumerator.get_current();
-  //       titles.push(list.get_title());
-  //     }
-
-  //     this.setState((prevState: IFormSubmissionState, props: IFormSubmissionProps): IFormSubmissionState => {
-  //       prevState.listTitles = titles;
-  //       prevState.loadingLists = false;
-  //       return prevState;
-  //     });
-  //   }, (sender: any, args: SP.ClientRequestFailedEventArgs): void => {
-  //     this.setState({
-  //       loadingLists: false,
-  //       listTitles: [],
-  //       error: args.get_message()
-  //     });
-  //   });
-  // }
-
-  private addToDocumentList(title:string, description:string, document:string):void {
+  /* ----------------------------------- Adding to List ---------------------------------- */
+  private addToDocumentList():void {
     // setting the react state for the request
     this.setState({
       loadingLists: true,
       error:null,
       listTitle: "",
       listDescription: "",
-      fileData: ""
+      fileData: "",
+      fileName: ""
     });
 
+    console.log("===================Form Data========================");
+    console.log(this.state.listTitle);
+    console.log(this.state.listDescription);
+    console.log(this.state.fileData);
+    console.log(this.state.fileName);
+    console.log("====================================================");
+
+    console.log("Variable Initialization");
     // variable initialization and declaration
     const context: SP.ClientContext = new SP.ClientContext(this.props.siteUrl);
     const projectList: SP.List = context.get_web().get_lists().getByTitle("project_document_list");
-    const documentList: SP.List = context.get_web().get_lists().getByTitle("Documents");
     const projectItemCreateInfo: SP.ListItemCreationInformation = new SP.ListItemCreationInformation();
-    const documentItemCreateInfo: SP.ListItemCreationInformation = new SP.ListItemCreationInformation();
     var projectListItem: SP.ListItem = null;
-    var documentListItem: SP.ListItem = null;
 
+    console.log("uploading the file");
+    this.uploadFileToDocumentLibrary(context);
+
+    console.log("Set List Information");
     // getting creation information from the list
     projectListItem = projectList.addItem(projectItemCreateInfo);
-    documentListItem = documentList.addItem(projectItemCreateInfo);
 
-    // the file is created and converted
-    var fileCreateInfo: SP.FileCreationInformation = new SP.FileCreationInformation();
-    fileCreateInfo.set_url(this.state.fileData);
-    fileCreateInfo.set_content(new SP.Base64EncodedByteArray());
-    var fileContent:string = "The content of my new file";
-
-    for (var i:number = 0; i < fileContent.length; i++) {
-      fileCreateInfo.get_content().append(fileContent.charCodeAt(i));
-    }
-
-    // adding document to the document library
-    var newFile:SP.File = documentList.get_rootFolder().get_files().add(fileCreateInfo);
-    documentListItem = newFile.get_listItemAllFields();
-    documentListItem.set_item("Note", "NewValue");
-
-
+    console.log("Adding Project info");
     // adding record of document to the list
-    projectListItem.set_item('Title',title);
-    projectListItem.set_item('Description',description);
-    projectListItem.set_item('Document',document);
+    projectListItem.set_item('Title',this.state.listTitle);
+    projectListItem.set_item('Description',this.state.listDescription);
+    // projectListItem.set_item('Document',this.state.fileData);
     projectListItem.update();
 
+    console.log("loading info");
     // loading content
     context.load(projectListItem);
-    context.load(documentListItem);
 
+    console.log("uploading to sharepoint");
     // adding content to sharepoint
     context.executeQueryAsync(this.onQuerySucceeded,
                                this.onQueryFailed);
   }
 
-private onQuerySucceeded(sender:any,args:any):any {
-  alert('Item added succesfully');
-}
+  /* ------------------------------------ File Upload ---------------------------------------- */
+  private uploadFile(value:any): void {
+    console.log("filename: "+ value.name);
+    // parsing document information out
+    var fileName:string = value.name;
 
-  private onQueryFailed(sender:any, args:any):any {
-  alert('Request failed. ' + args.get_message() + '\n' + args.get_stackTrace());
-}
+    // read from file
+    var reader:FileReader = new FileReader();
 
-  private handleInputChange(event:any):void {
-    const target:any = event.target;
-    const value:any = target.value;
-    const name:any = target.name;
+    reader.onload = (e) => {
+      let target:any = e.target;
+      let content:string = target.result;
+      this.encodeFile(content,fileName);
+    };
+
+    reader.onerror = (e) => {
+      let target: any = e.target;
+      let content: string = target.error;
+      alert("Error on file upload: " + content);
+    };
+
+    reader.readAsArrayBuffer(this.state.fileData);
+  }
+
+  private encodeFile(arrayBuffer:any, fileName:string):void {
+    console.log("Converting file contents to base64");
+    // convert the file contents into base64 data
+    var bytes:Uint8Array = new Uint8Array(arrayBuffer);
+    var i:number = 0;
+    var length:number = bytes.length;
+    var out:string = '';
+    for (i = 0, length = bytes.length; i < length; i += 1) {
+      out += String.fromCharCode(bytes[i]);
+    }
+    var base64:SP.Base64EncodedByteArray = new SP.Base64EncodedByteArray(btoa(out));
+    console.log(base64);
 
     this.setState({
-      [name]: value
+      fileData: base64,
+      fileName: fileName
     });
   }
 
+  private uploadFileToDocumentLibrary(context:SP.ClientContext):void {
+    // get Client Context,Web and List object.
+    var oWeb:SP.Web = context.get_web();
+    var oList:SP.List = oWeb.get_lists().getByTitle('Documents');
+
+    console.log("Creating file for sharepoint upload");
+    // create FileCreationInformation object using the read file data
+    var createInfo:SP.FileCreationInformation = new SP.FileCreationInformation();
+    createInfo.set_content(this.state.fileData);
+    createInfo.set_url(this.state.fileName);
+
+    console.log("Uploading document");
+    // add the file to the library
+    var uploadedDocument:SP.File = oList.get_rootFolder().get_files().add(createInfo);
+    // load client context and execcute the batch
+    context.load(uploadedDocument);
+    context.executeQueryAsync(this.onQuerySucceeded, this.onQueryFailed);
+  }
+
+  /* ------------------------------------- On Change Handler --------------------------------- */
+  private handleInputChange(event:any):void {
+    const target:any = event.target;
+    const value: any = target.type === 'file' ? target.files[0] : target.value;
+    const name:any = target.name;
+
+    if(target.type === 'file') {
+      var reader: FileReader = new FileReader();
+
+      reader.onload = function (event:any):void{
+        console.log("file loaded");
+        let target: any = event.target;
+        let content: string = target.result;
+        this.encodeFile(content, value.name);
+      }.bind(this);
+
+      reader.onerror = (e) => {
+        let target: any = e.target;
+        let content: string = target.error;
+        alert("Error on file upload: " + content);
+      };
+
+      reader.readAsArrayBuffer(value);
+    }else {
+      this.setState({
+        [name]: value
+      });
+    }
+  }
+
+  /* ----------------------------------- React Render --------------------------------------- */
   public render(): React.ReactElement<IFormSubmissionProps> {
     // const titles: JSX.Element[] = this.state.listTitles.map((listTitle: string, index: number, listTitles: string[]): JSX.Element => {
     //   return <li key={index}>{listTitle}</li>;
@@ -134,7 +176,7 @@ private onQuerySucceeded(sender:any,args:any):any {
 
     return (
       <div className={styles.projectSubmissionForm}>
-        <form method="post" action="addToDocumentList()" encType="multipart/form-data">
+        {/* <form encType="multipart/form-data"> */}
           {/* <!-- Title --> */}
           <div className={styles.title}>
             Submission Form
@@ -167,17 +209,26 @@ private onQuerySucceeded(sender:any,args:any):any {
               Upload File
             </div>
             <input type="file"
-                   name="file"
-                   id="file"
+                   name="fileData"
+                   id="documentUpload"
                    className={styles.inputfile}
                    onChange={this.handleInputChange} />
-            <label htmlFor="file">Choose a file</label>
+            <label htmlFor="documentUpload">Choose a file</label>
           </div>
 
           {/* <!-- Submit --> */}
-          <input type="submit" value="Submit" />
-        </form>
+          <input type="submit" value="Submit" onClick={this.addToDocumentList} />
+        {/* </form> */}
       </div>
     );
+  }
+
+  /* ----------------------------------- CallBack Functions ----------------------------- */
+  private onQuerySucceeded(sender: any, args: any): any {
+    alert('Item added succesfully');
+  }
+
+  private onQueryFailed(sender: any, args: any): any {
+    alert('Request failed. ' + args.get_message() + '\n' + args.get_stackTrace());
   }
 }
